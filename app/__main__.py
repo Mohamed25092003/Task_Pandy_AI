@@ -1,8 +1,44 @@
 # app.py
 import argparse
+from types import SimpleNamespace
+
 from cli.rank import run_rank
 from cli.explain import run_explain
 from cli.demo import run_demo
+
+
+def interactive_menu():
+    print("Task interactive launcher")
+    print("Commands:")
+    print("  1) rank   - Rank candidates for a job")
+    print("  2) explain - Explain candidate vs job")
+    print("  3) demo   - Run demo for all jobs")
+    print("  q) quit")
+
+    while True:
+        choice = input("Choose command: ").strip()
+        if choice in ("q", "quit", "exit"):
+            print("Goodbye")
+            return
+        if choice in ("1", "rank"):
+            job_id = input("Job id (e.g. j-001): ").strip()
+            top_k_raw = input("Top k (default 10): ").strip()
+            out = input("Output path (e.g. outputs/j-001.json): ").strip()
+            top_k = int(top_k_raw) if top_k_raw else 10
+            out = out or f"outputs/{job_id}.json"
+            args = SimpleNamespace(job_id=job_id, top_k=top_k, out=out)
+            run_rank(args)
+        elif choice in ("2", "explain"):
+            job_id = input("Job id (e.g. j-001): ").strip()
+            candidate_id = input("Candidate id (e.g. c-001): ").strip()
+            args = SimpleNamespace(job_id=job_id, candidate_id=candidate_id)
+            run_explain(args)
+        elif choice in ("3", "demo"):
+            out_dir = input("Output directory (e.g. outputs/): ").strip() or "outputs"
+            args = SimpleNamespace(out_dir=out_dir)
+            run_demo(args)
+        else:
+            print("Unknown choice. Please select 1,2,3 or q.")
 
 def main():
     parser = argparse.ArgumentParser(
@@ -35,7 +71,7 @@ def main():
     elif args.command == "demo":
         run_demo(args)
     else:
-        parser.print_help()
+        interactive_menu()
 
 if __name__ == "__main__":
     main()
