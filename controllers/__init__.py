@@ -1,2 +1,3 @@
 from controllers.BaseController import BaseController
 from controllers.Preprocessing import Preprocessing
+from controllers.RankingController import RankingController

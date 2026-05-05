@@ -12,16 +12,14 @@ class Preprocessing(BaseController):
 
         return job_offers, candidates
 
-    def Alias_correction(self, text):
-        # Define a mapping of common aliases to their corrected forms
-        alias_mapping = {
-            "JS": "JavaScript",
-            "TS": "TypeScript",
-            "ReactJS": "React",
-            "Node": "Node.js"
-        }
-
-        corrected_words = [alias_mapping.get(word, word) for word in text.split()]
-       
-        corrected_text = ' '.join(corrected_words)
-        return corrected_text
+    def Alias_correction(self, skill):
+            alias_mapping = {
+                "js": "javascript",
+                "ts": "typescript",
+                "reactjs": "react",
+                "node": "node.js",
+                "d3": "data visualization",
+                "recharts": "data visualization",
+            }
+            cleaned = skill.strip().lower()
+            return alias_mapping.get(cleaned, cleaned)
