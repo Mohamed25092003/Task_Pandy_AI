@@ -8,6 +8,14 @@ The CLI reads job postings and candidate profiles from JSON files in `Data/`, pr
 
 This repository intentionally keeps dependencies minimal and uses only Python's standard library.
 
+## Approach (baseline vs embeddings)
+
+**Chosen approach: baseline weighted scoring (no embeddings).**
+
+- The model is a deterministic, rules-based scorer with explicit weights.
+- Embeddings are not used in the current implementation. This keeps the system explainable, fast, and dependency-free.
+- The `meta.approach` field is set to `baseline-v1` in outputs.
+
 ## Quick start
 
 Prerequisites: Python 3.10+
@@ -80,6 +88,67 @@ WEIGHTS/Weights.py  → weight coefficients
 	▼
 outputs/*.json  (rank/demo) and console output (explain)
 ```
+
+## Scoring formula (with weights)
+
+Weights (from `WEIGHTS/Weights.py`):
+
+- MUST_HAVE = 0.5
+- EXPERIENCE = 0.2
+- NICE_TO_HAVE = 0.15
+- LOCATION = 0.1
+- FEEDBACK = 0.01
+- AVAILABILITY = 0.04
+
+Penalties:
+
+- MUST_HAVE_PENALTY = 0.25
+- EXPERIENCE_PENALTY = 0.5
+
+Definitions:
+
+- $m$ = must-have match ratio (matched / required)
+- $n$ = nice-to-have match ratio
+- $e$ = experience ratio (candidate years / min years, capped at 1)
+- $l$ = location match (0 or 1)
+- $f$ = feedback ratio (score / 100)
+- $a$ = availability match (0 or 1)
+
+Must-have and experience are penalized if below 1:
+
+$$
+	ext{must\_score} = \begin{cases}
+1 & \text{if } m = 1 \\
+m \cdot 0.25 & \text{if } m < 1
+\end{cases}
+$$
+
+$$
+	ext{exp\_score} = \begin{cases}
+1 & \text{if } e \ge 1 \\
+e \cdot 0.5 & \text{if } e < 1
+\end{cases}
+$$
+
+Final score:
+
+$$
+	ext{score} = \min\Big(1,\ \text{round}(0.5\cdot\text{must\_score} + 0.2\cdot\text{exp\_score} + 0.15\cdot n + 0.1\cdot l + 0.01\cdot f + 0.04\cdot a,\ 4)\Big)
+$$
+
+## Normalization logic
+
+Normalization is applied to skill strings before matching:
+
+1. **Lowercasing and trimming**: `skill.strip().lower()`
+2. **Alias mapping** (examples):
+	- `js` → `javascript`
+	- `ts` → `typescript`
+	- `reactjs` → `react`
+	- `node` → `node.js`
+	- `d3` / `recharts` → `data visualization`
+
+This normalization lives in `controllers/Preprocessing.py` and is used by the matching logic in `controllers/RankingController.py`.
 
 ## Project structure
 
@@ -274,9 +343,42 @@ Sample output (demo):
 python -m app
 ```
 
+## Small evaluation report (top-1 per job)
+
+Generated from `python -m app demo --out-dir outputs/`:
+
+| Job ID | Top Candidate | Score | Matched Skills | Missing Must-Haves |
+|--------|---------------|-------|----------------|--------------------|
+| j-001  | c-019         | 0.8476 | 4 | 0 |
+| j-002  | c-021         | 0.4625 | 5 | 1 |
+| j-003  | c-023         | 0.8841 | 6 | 0 |
+| j-004  | c-005         | 0.7784 | 3 | 0 |
+| j-005  | c-011         | 0.4768 | 5 | 1 |
+
 ## Notes & recommendations
 
 - If you want reproducible environments, create `requirements.txt` (already present) and use a dedicated venv outside the repo, or add a small `pyproject.toml`/`venv` instructions.
+
+## Trade-offs and next improvements
+
+Trade-offs in the current baseline:
+
+- Exact/alias-based skill matching only (no semantic matching).
+- Weights are static and hand-tuned, not learned.
+- Limited handling of soft skills and contextual experience.
+- Tie-breaking relies solely on score ordering.
+
+Potential next improvements:
+
+- Add embeddings or hybrid scoring for semantic skill similarity.
+- Learn weights from labeled historical data.
+- Expand normalization with richer skill taxonomies and synonyms.
+- Add tie-breakers (e.g., recency, portfolio quality signals).
+- Add more extensive tests and CI.
+
+## Time spent estimate
+
+Estimated total effort: **6–8 hours** (implementation, CLI, docs, and tests).
 
 ## License
 
