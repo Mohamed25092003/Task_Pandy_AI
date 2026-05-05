@@ -117,14 +117,14 @@ Definitions:
 Must-have and experience are penalized if below 1:
 
 $$
-	ext{must\_score} = \begin{cases}
+	{Must\_score} = \begin{cases}
 1 & \text{if } m = 1 \\
 m \cdot 0.25 & \text{if } m < 1
 \end{cases}
 $$
 
 $$
-	ext{exp\_score} = \begin{cases}
+	{Experience\_score} = \begin{cases}
 1 & \text{if } e \ge 1 \\
 e \cdot 0.5 & \text{if } e < 1
 \end{cases}
@@ -133,7 +133,7 @@ $$
 Final score:
 
 $$
-	ext{score} = \min\Big(1,\ \text{round}(0.5\cdot\text{must\_score} + 0.2\cdot\text{exp\_score} + 0.15\cdot n + 0.1\cdot l + 0.01\cdot f + 0.04\cdot a,\ 4)\Big)
+	{score} = \min\Big(1,\ \text{round}(0.5\cdot\text{must\_score} + 0.2\cdot\text{experience\_score} + 0.15\cdot n + 0.1\cdot l + 0.01\cdot f + 0.04\cdot a,\ 4)\Big)
 $$
 
 ## Normalization logic
