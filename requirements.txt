@@ -1,0 +1,10 @@
+# Pandy AI - Candidate Ranking System
+# Core dependencies (Python 3.10+)
+# No external dependencies required - uses only Python standard library
+
+# Standard library modules used:
+# - json: JSON file handling
+# - os: File system operations
+# - argparse: CLI argument parsing
+# - datetime: Timestamp generation
+# - enum: Weight enumeration
