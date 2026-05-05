@@ -370,15 +370,12 @@ Trade-offs in the current baseline:
 
 Potential next improvements:
 
-- Add embeddings or hybrid scoring for semantic skill similarity.
+- Add Dockerfile + docker-compose for reproducible runs.
+- Add a hybrid system with semantic embeddings for similarity scoring.
 - Learn weights from labeled historical data.
 - Expand normalization with richer skill taxonomies and synonyms.
 - Add tie-breakers (e.g., recency, portfolio quality signals).
 - Add more extensive tests and CI.
-
-## Time spent estimate
-
-Estimated total effort: **6–8 hours** (implementation, CLI, docs, and tests).
 
 ## License
 
