@@ -91,10 +91,7 @@ Root files and folders:
 - `controllers/` — core logic (preprocessing, ranking controller)
 - `WEIGHTS/` — scoring weights configuration
 - `Data/` — input JSON files (`jobs.json`, `candidates.json`) and sample output
-- `outputs/` — generated outputs (ignored by git)
-- `pandy_ai/` — local virtualenv (should be ignored)
 - `requirements.txt` — project requirements (standard library only)
-- `.gitignore` — files/folders excluded from git
 
 Key files:
 
