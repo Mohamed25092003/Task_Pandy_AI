@@ -187,7 +187,7 @@ Task_Pandy_AI/
 ├── Data/
 │   ├── candidates.json
 │   ├── jobs.json
-│   └── output.json
+│   
 ├── WEIGHTS/
 │   └── Weights.py
 ├── outputs/
